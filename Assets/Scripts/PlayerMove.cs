@@ -6,6 +6,11 @@ using UnityEngine;
 public class PlayerMove : MonoBehaviour
 {
     private float _speed =  20f;
+    private GameManager gm;
+    private void Start()
+    {
+        gm = GameObject.Find("GameManager").GetComponent<GameManager>();
+    }
 
     private void Update()
     {
@@ -35,5 +40,18 @@ public class PlayerMove : MonoBehaviour
         Vector3 posCheck = transform.position;
         posCheck.x = Mathf.Clamp(posCheck.x, -3.167f, 3.78f);
         transform.position = posCheck;
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.tag == "Upgrade")
+        {
+            gm.Grade += 1;
+        }
+
+        if (other.gameObject.tag == "Downgrade")
+        {
+            gm.Grade -= 1;
+        }
     }
 }
