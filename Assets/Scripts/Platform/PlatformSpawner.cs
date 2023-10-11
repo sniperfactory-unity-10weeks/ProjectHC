@@ -5,22 +5,22 @@ using UnityEngine;
 
 public class PlatformSpawner : MonoBehaviour
 {
-    public GameObject platformPrefab; // �÷��� ������
-    public int poolSize = 5; // Ǯ�� ũ��
-    public float spawnRate = 5f; // �÷����� �����Ǵ� ��
-    public float platformLength = 30f; // �÷����� ����
-    public Transform player; // �÷��̾��� Transform
+     public GameObject[] platformPrefabs; // 다양한 플랫폼 프리팹을 저장할 배열
+    public int poolSize = 6;
+    public float spawnRate = 5f;
+    public float platformLength = 30f;
+    public Transform player;
 
-    private Queue<GameObject> platformPool; // �÷��� Ǯ
-    private Vector3 lastSpawnPoint; // ���������� ������ �÷����� ��ġ
+    private Queue<GameObject> platformPool;
+    private Vector3 lastSpawnPoint;
 
     private void Start()
     {
         platformPool = new Queue<GameObject>();
 
-        // ó���� Ǯ�� ũ�⸸ŭ �÷����� �����մϴ�.
         for (int i = 0; i < poolSize; i++)
         {
+            GameObject platformPrefab = GetRandomPlatformPrefab();
             GameObject platform = Instantiate(platformPrefab);
             platform.SetActive(false);
             platformPool.Enqueue(platform);
@@ -28,8 +28,6 @@ public class PlatformSpawner : MonoBehaviour
 
         Debug.Log("Initial platform pool count: " + platformPool.Count);
 
-
-        // ���� ���� �ʱ�ȭ
         lastSpawnPoint = transform.position;
 
         for (int i = 0; i < poolSize; i++)
@@ -37,16 +35,20 @@ public class PlatformSpawner : MonoBehaviour
             SpawnPlatform();
         }
     }
-       
+
     private void Update()
     {
-     
-        // �÷��̾ �ٰ����� ���ο� �÷����� �����ϰ� ������ �÷����� �����մϴ�.
         if (player.position.z > lastSpawnPoint.z - (poolSize * platformLength) + platformLength)
         {
             SpawnPlatform();
             RecyclePlatform();
         }
+    }
+
+    private GameObject GetRandomPlatformPrefab()
+    {
+        int randomIndex = Random.Range(0, platformPrefabs.Length);
+        return platformPrefabs[randomIndex];
     }
 
     private void SpawnPlatform()
@@ -57,6 +59,7 @@ public class PlatformSpawner : MonoBehaviour
             return;
         }
 
+        GameObject platformPrefab = GetRandomPlatformPrefab();
         GameObject platform = platformPool.Dequeue();
         platform.transform.position = lastSpawnPoint;
         platform.SetActive(true);

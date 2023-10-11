@@ -824,7 +824,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8a20c0533c9472a41b100060b723474b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  platformPrefab: {fileID: 652480987839863156, guid: 50f6fef137200414192fefbc63ddece7, type: 3}
+  platformPrefabs:
+  - {fileID: 652480987839863156, guid: 50f6fef137200414192fefbc63ddece7, type: 3}
+  - {fileID: 652480987839863156, guid: 469411ecb605c3d44913a6ac0ab0a8aa, type: 3}
+  - {fileID: 652480987839863156, guid: 4e18f1a64b0d9af4e8f87eac9983d2b2, type: 3}
   poolSize: 5
   spawnRate: 5
   platformLength: 30
