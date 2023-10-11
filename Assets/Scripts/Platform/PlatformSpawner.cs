@@ -5,34 +5,43 @@ using UnityEngine;
 
 public class PlatformSpawner : MonoBehaviour
 {
-    public List<GameObject> platformPrefabs; // 플랫폼 프리팹들의 목록
-    public int poolSize = 5; // 풀의 크기
-    public float spawnRate = 5f; // 플랫폼이 생성되는 빈도
-    public float platformLength = 30f; // 플랫폼의 길이
-    public Transform player; // 플레이어의 Transform
+    public GameObject platformPrefab; // �÷��� ������
+    public int poolSize = 5; // Ǯ�� ũ��
+    public float spawnRate = 5f; // �÷����� �����Ǵ� ��
+    public float platformLength = 30f; // �÷����� ����
+    public Transform player; // �÷��̾��� Transform
 
-    private Queue<GameObject> platformPool; // 플랫폼 풀
-    public Vector3 lastSpawnPoint; // 마지막으로 생성된 플랫폼의 위치
+    private Queue<GameObject> platformPool; // �÷��� Ǯ
+    private Vector3 lastSpawnPoint; // ���������� ������ �÷����� ��ġ
 
     private void Start()
     {
         platformPool = new Queue<GameObject>();
 
-        // 처음에 풀의 크기만큼 플랫폼을 생성합니다.
+        // ó���� Ǯ�� ũ�⸸ŭ �÷����� �����մϴ�.
         for (int i = 0; i < poolSize; i++)
         {
-            GameObject platform = Instantiate(GetRandomPlatformPrefab());
+            GameObject platform = Instantiate(platformPrefab);
             platform.SetActive(false);
             platformPool.Enqueue(platform);
         }
 
-        // 시작 지점 초기화
-        lastSpawnPoint = transform.position;
-    }
+        Debug.Log("Initial platform pool count: " + platformPool.Count);
 
+
+        // ���� ���� �ʱ�ȭ
+        lastSpawnPoint = transform.position;
+
+        for (int i = 0; i < poolSize; i++)
+        {
+            SpawnPlatform();
+        }
+    }
+       
     private void Update()
     {
-        // 플레이어가 다가오면 새로운 플랫폼을 생성하고 오래된 플랫폼을 재사용합니다.
+     
+        // �÷��̾ �ٰ����� ���ο� �÷����� �����ϰ� ������ �÷����� �����մϴ�.
         if (player.position.z > lastSpawnPoint.z - (poolSize * platformLength) + platformLength)
         {
             SpawnPlatform();
@@ -51,6 +60,8 @@ public class PlatformSpawner : MonoBehaviour
         GameObject platform = platformPool.Dequeue();
         platform.transform.position = lastSpawnPoint;
         platform.SetActive(true);
+        Debug.Log("Spawning platform at position: " + lastSpawnPoint.z + ". Pool count before spawn: " + platformPool.Count);
+
         lastSpawnPoint = new Vector3(lastSpawnPoint.x, lastSpawnPoint.y, lastSpawnPoint.z + platformLength);
     }
 
@@ -58,18 +69,15 @@ public class PlatformSpawner : MonoBehaviour
     {
         foreach (var platform in GameObject.FindGameObjectsWithTag("Platform"))
         {
+            Debug.Log("Platform Z: " + platform.transform.position.z + ", Player Z: " + player.position.z);
+
             if (platform.activeSelf && (player.position.z - platform.transform.position.z) > platformLength)
             {
+                Debug.Log("Recycling platform at: " + platform.transform.position);
                 platform.SetActive(false);
                 platformPool.Enqueue(platform);
                 return;
             }
         }
-    }
-
-    // 랜덤한 플랫폼 프리팹을 반환하는 함수
-    private GameObject GetRandomPlatformPrefab()
-    {
-        return platformPrefabs[Random.Range(0, platformPrefabs.Count)];
     }
 }

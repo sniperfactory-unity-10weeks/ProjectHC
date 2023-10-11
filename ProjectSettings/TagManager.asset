@@ -12,6 +12,8 @@ TagManager:
   - Upgrade
   - Downgrade
   - Platform
+  - DeadZone
+  - Bullet
   layers:
   - Default
   - TransparentFX
