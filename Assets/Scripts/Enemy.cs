@@ -9,15 +9,17 @@ public class Enemy : MonoBehaviour
     public GameObject player;
     public float speed = 30.0f; 
     private Vector3 initialPosition; // 몬스터의 초기 위치
+    
+    public Transform target; // B 오브젝트 (따라갈 대상)
 
     private void Start()
     {
-
+        target = GameObject.Find("Player").GetComponent<Transform>();
     }
 
     private void Update()
     {
-        Vector3 sponPos = new Vector3(Random.Range(-2, 2), transform.position.y, transform.position.z);
+        Vector3 sponPos = new Vector3(Random.Range(-2, 2), transform.position.y, transform.position.z + 10);
         initialPosition = sponPos;
         
 
@@ -28,6 +30,12 @@ public class Enemy : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.tag == "Player")
+        {
+            ReturnToPool();
+            
+        }
+
+        if (other.gameObject.tag == "DeadZone")
         {
             ReturnToPool();
         }
@@ -41,11 +49,10 @@ public class Enemy : MonoBehaviour
 
     private void ChasePlayer()
     {
-        Vector3 direction = player.transform.position - transform.position;   // 플레이어를 향해 이동하는 방향 벡터 계산
-               
-        direction.Normalize();      // 항상 같은 속도로 추적하게 함
-            
-        transform.Translate(direction * speed * Time.deltaTime);    // 적을 플레이어 방향으로 이동
+        Vector3 direction = target.position - transform.position;
+        direction.Normalize();
+
+        transform.position += direction * speed * Time.deltaTime;
     }
 
     private void ReturnToPool()
