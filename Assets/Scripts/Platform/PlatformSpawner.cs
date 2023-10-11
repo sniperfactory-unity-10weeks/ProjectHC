@@ -5,43 +5,34 @@ using UnityEngine;
 
 public class PlatformSpawner : MonoBehaviour
 {
-    public GameObject platformPrefab; // ÇÃ·§Æû ÇÁ¸®ÆÕ
-    public int poolSize = 5; // Ç®ÀÇ Å©±â
-    public float spawnRate = 5f; // ÇÃ·§ÆûÀÌ »ı¼ºµÇ´Â ºóµµ
-    public float platformLength = 30f; // ÇÃ·§ÆûÀÇ ±æÀÌ
-    public Transform player; // ÇÃ·¹ÀÌ¾îÀÇ Transform
+    public List<GameObject> platformPrefabs; // í”Œë«í¼ í”„ë¦¬íŒ¹ë“¤ì˜ ëª©ë¡
+    public int poolSize = 5; // í’€ì˜ í¬ê¸°
+    public float spawnRate = 5f; // í”Œë«í¼ì´ ìƒì„±ë˜ëŠ” ë¹ˆë„
+    public float platformLength = 30f; // í”Œë«í¼ì˜ ê¸¸ì´
+    public Transform player; // í”Œë ˆì´ì–´ì˜ Transform
 
-    private Queue<GameObject> platformPool; // ÇÃ·§Æû Ç®
-    private Vector3 lastSpawnPoint; // ¸¶Áö¸·À¸·Î »ı¼ºµÈ ÇÃ·§ÆûÀÇ À§Ä¡
+    private Queue<GameObject> platformPool; // í”Œë«í¼ í’€
+    public Vector3 lastSpawnPoint; // ë§ˆì§€ë§‰ìœ¼ë¡œ ìƒì„±ëœ í”Œë«í¼ì˜ ìœ„ì¹˜
 
     private void Start()
     {
         platformPool = new Queue<GameObject>();
 
-        // Ã³À½¿¡ Ç®ÀÇ Å©±â¸¸Å­ ÇÃ·§ÆûÀ» »ı¼ºÇÕ´Ï´Ù.
+        // ì²˜ìŒì— í’€ì˜ í¬ê¸°ë§Œí¼ í”Œë«í¼ì„ ìƒì„±í•©ë‹ˆë‹¤.
         for (int i = 0; i < poolSize; i++)
         {
-            GameObject platform = Instantiate(platformPrefab);
+            GameObject platform = Instantiate(GetRandomPlatformPrefab());
             platform.SetActive(false);
             platformPool.Enqueue(platform);
         }
 
-        Debug.Log("Initial platform pool count: " + platformPool.Count);
-
-
-        // ½ÃÀÛ ÁöÁ¡ ÃÊ±âÈ­
+        // ì‹œì‘ ì§€ì  ì´ˆê¸°í™”
         lastSpawnPoint = transform.position;
-
-        for (int i = 0; i < poolSize; i++)
-        {
-            SpawnPlatform();
-        }
     }
-       
+
     private void Update()
     {
-     
-        // ÇÃ·¹ÀÌ¾î°¡ ´Ù°¡¿À¸é »õ·Î¿î ÇÃ·§ÆûÀ» »ı¼ºÇÏ°í ¿À·¡µÈ ÇÃ·§ÆûÀ» Àç»ç¿ëÇÕ´Ï´Ù.
+        // í”Œë ˆì´ì–´ê°€ ë‹¤ê°€ì˜¤ë©´ ìƒˆë¡œìš´ í”Œë«í¼ì„ ìƒì„±í•˜ê³  ì˜¤ë˜ëœ í”Œë«í¼ì„ ì¬ì‚¬ìš©í•©ë‹ˆë‹¤.
         if (player.position.z > lastSpawnPoint.z - (poolSize * platformLength) + platformLength)
         {
             SpawnPlatform();
@@ -60,8 +51,6 @@ public class PlatformSpawner : MonoBehaviour
         GameObject platform = platformPool.Dequeue();
         platform.transform.position = lastSpawnPoint;
         platform.SetActive(true);
-        Debug.Log("Spawning platform at position: " + lastSpawnPoint.z + ". Pool count before spawn: " + platformPool.Count);
-
         lastSpawnPoint = new Vector3(lastSpawnPoint.x, lastSpawnPoint.y, lastSpawnPoint.z + platformLength);
     }
 
@@ -69,15 +58,18 @@ public class PlatformSpawner : MonoBehaviour
     {
         foreach (var platform in GameObject.FindGameObjectsWithTag("Platform"))
         {
-            Debug.Log("Platform Z: " + platform.transform.position.z + ", Player Z: " + player.position.z);
-
             if (platform.activeSelf && (player.position.z - platform.transform.position.z) > platformLength)
             {
-                Debug.Log("Recycling platform at: " + platform.transform.position);
                 platform.SetActive(false);
                 platformPool.Enqueue(platform);
                 return;
             }
         }
+    }
+
+    // ëœë¤í•œ í”Œë«í¼ í”„ë¦¬íŒ¹ì„ ë°˜í™˜í•˜ëŠ” í•¨ìˆ˜
+    private GameObject GetRandomPlatformPrefab()
+    {
+        return platformPrefabs[Random.Range(0, platformPrefabs.Count)];
     }
 }
