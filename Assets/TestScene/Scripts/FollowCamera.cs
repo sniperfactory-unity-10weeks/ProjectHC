@@ -14,6 +14,12 @@ public class FollowCamera : MonoBehaviour
 
     private void Update()
     {
+        targetFollow();
+    }
+
+    // 타겟을 0, 6f, -7 거리를 두고 따라가는 카메라기능
+    private void targetFollow()
+    {
         Vector3 dir = new Vector3(0, 6f, -7f);
         transform.position = target.position + dir;
     }
