@@ -14,6 +14,13 @@ public class PlayerMove : MonoBehaviour
     void Update()
     {
         transform.Translate(new Vector3(0,0, _speed* Time.deltaTime));
-
+        if (Input.GetKey(KeyCode.A))
+        {
+            transform.Translate(-_speed * Time.deltaTime, 0, 0);
+        }
+        if (Input.GetKey(KeyCode.D))
+        {
+            transform.Translate(_speed * Time.deltaTime, 0, 0);
+        }
     }
 }
